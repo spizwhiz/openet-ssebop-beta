@@ -54,8 +54,9 @@ def test_ee_init():
 
 def test_Image_default_parameters():
     s = ssebop.Image(default_image())
-    assert s.etr_source == 'IDAHO_EPSCOR/GRIDMET'
-    assert s.etr_band == 'etr'
+    assert s.etr_source == None
+    assert s.etr_band == None
+    assert s.etr_factor == 1.0
     assert s._dt_source == 'DAYMET_MEDIAN_V1'
     assert s._elev_source == 'SRTM'
     assert s._tcorr_source == 'IMAGE'

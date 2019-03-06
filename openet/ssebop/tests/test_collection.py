@@ -30,6 +30,7 @@ def default_coll_args():
         'variables': VARIABLES,
         'etr_source': 'IDAHO_EPSCOR/GRIDMET',
         'etr_band': 'etr',
+        'etr_factor': 0.85,
     }
 
 
@@ -52,14 +53,16 @@ def test_Collection_init_default_parameters():
     # These values are being set above but have defaults that need to be checked
     del args['etr_source']
     del args['etr_band']
+    del args['etr_factor']
     del args['variables']
 
     n = ssebop.Collection(**args)
 
     assert n.variables == None
-    assert n.cloud_cover_max == 70
     assert n.etr_source == None
     assert n.etr_band == None
+    assert n.etr_factor == 1.0
+    assert n.cloud_cover_max == 70
     assert n.model_args == {}
     assert n.filter_args == {}
     assert n._interp_vars == ['ndvi', 'etf']

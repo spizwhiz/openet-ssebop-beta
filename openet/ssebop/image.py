@@ -29,8 +29,9 @@ class Image():
 
     def __init__(
             self, image,
-            etr_source='IDAHO_EPSCOR/GRIDMET',
-            etr_band='etr',
+            etr_source=None,
+            etr_band=None,
+            etr_factor=1.0,
             dt_source='DAYMET_MEDIAN_V1',
             elev_source='SRTM',
             tcorr_source='IMAGE',
@@ -39,7 +40,7 @@ class Image():
             tdiff_threshold=15,
             dt_min=6,
             dt_max=25,
-            ):
+        ):
         """Construct a generic SSEBop Image
 
         Parameters
@@ -49,9 +50,13 @@ class Image():
             Image must have bands "ndvi" and "lst".
             Image must have 'system:index' and 'system:time_start' properties.
         etr_source : str, float, optional
-            Reference ET source (the default is 'IDAHO_EPSCOR/GRIDMET').
+            Reference ET source (the default is None).
+            Parameter is required if computing 'etr' or 'et'.
         etr_band : str, optional
-            Reference ET band name (the default is 'etr').
+            Reference ET band name (the default is None).
+            Parameter is required if computing 'etr' or 'et'.
+        etr_factor : float, optional
+            Reference ET scaling factor (the default is 1.0).
         dt_source : {'DAYMET_MEDIAN_V0', 'DAYMET_MEDIAN_V1', or float}, optional
             dT source keyword (the default is 'DAYMET_MEDIAN_V1').
         elev_source : {'ASSET', 'GTOPO', 'NED', 'SRTM', or float}, optional
@@ -117,9 +122,10 @@ class Image():
         self._cycle_day = self._start_date.difference(
             ee.Date.fromYMD(1970, 1, 3), 'day').mod(8).add(1).int()
 
-        #
+        # Reference ET input parameters
         self.etr_source = etr_source
         self.etr_band = etr_band
+        self.etr_factor = etr_factor
 
         # Model input parameters
         self._dt_source = dt_source
@@ -267,13 +273,14 @@ class Image():
         # The benefit of this is the ETr image is now in the same crs as the
         #   input image.  Not all models may want this though.
         # CGM - Should the output band name match the input ETr band name?
-        return self.ndvi.multiply(0).add(etr_img) \
+        return self.ndvi.multiply(0).add(etr_img)\
+            .multiply(self.etr_factor)\
             .rename(['etr']).set(self._properties)
 
     @lazy_property
     def et(self):
         """Compute actual ET as fraction of reference times reference"""
-        return self.etf.multiply(self.etr) \
+        return self.etf.multiply(self.etr)\
             .rename(['et']).set(self._properties).double()
 
     @lazy_property
@@ -286,14 +293,14 @@ class Image():
     def quality(self):
         """Set quality to 1 for all active pixels (for now)"""
         tcorr, tcorr_index = self._tcorr
-        return self.mask \
+        return self.mask\
             .rename(['quality']).set(self._properties)
 
     @lazy_property
     def time(self):
         """Return an image of the 0 UTC time (in milliseconds)"""
         return self.mask\
-            .double().multiply(0).add(utils.date_to_time_0utc(self._date)) \
+            .double().multiply(0).add(utils.date_to_time_0utc(self._date))\
             .rename(['time']).set(self._properties)
         # return ee.Image.constant(utils.date_to_time_0utc(self._date)) \
         #     .double().rename(['time']).set(self._properties)

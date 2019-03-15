@@ -325,10 +325,11 @@ def main(ini_path=None, overwrite_flag=False, delay=0, key=None):
         # pprint.pprint(ee.Image(tcorr_img_coll.first()).getInfo())
         # input('ENTER')
 
+        # There should not be more than two overlapping values on any day
         # If there are no Tcorr values, return an empty image
         tcorr_img = ee.Algorithms.If(
             tcorr_img_coll.size().gt(0),
-            tcorr_img_coll.median(),
+            tcorr_img_coll.mean(),
             tmax_mask.updateMask(0))
         # pprint.pprint(tcorr_img.getInfo())
         # pprint.pprint(tcorr_img_coll.size().getInfo())

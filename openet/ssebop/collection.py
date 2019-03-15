@@ -588,9 +588,9 @@ class Collection():
                 agg_end_date = ee.Date(agg_start_date).advance(1, 'day')
 
                 # if 'et' in variables or 'etf' in variables:
-                et_img = daily_img.select(['et']).multiply(self.etr_factor)
+                et_img = daily_img.select(['et']).multiply(etr_factor)
                 # if 'etr' in variables or 'etf' in variables:
-                etr_img = daily_img.select(['etr']).multiply(self.etr_factor)
+                etr_img = daily_img.select(['etr']).multiply(etr_factor)
 
                 image_list = []
                 if 'et' in variables:
@@ -630,10 +630,10 @@ class Collection():
                 agg_end_date = ee.Date(agg_start_date).advance(1, 'month')
                 # if 'et' in variables or 'etf' in variables:
                 et_img = daily_coll.filterDate(agg_start_date, agg_end_date)\
-                    .select(['et']).sum().multiply(self.etr_factor)
+                    .select(['et']).sum().multiply(etr_factor)
                 # if 'etr' in variables or 'etf' in variables:
                 etr_img = daily_coll.filterDate(agg_start_date, agg_end_date)\
-                    .select(['etr']).sum().multiply(self.etr_factor)
+                    .select(['etr']).sum().multiply(etr_factor)
 
                 image_list = []
                 if 'et' in variables:
@@ -674,10 +674,10 @@ class Collection():
                 agg_end_date = ee.Date(agg_start_date).advance(1, 'year')
                 # if 'et' in variables or 'etf' in variables:
                 et_img = daily_coll.filterDate(agg_start_date, agg_end_date) \
-                    .select(['et']).sum().multiply(self.etr_factor)
+                    .select(['et']).sum().multiply(etr_factor)
                 # if 'etr' in variables or 'etf' in variables:
                 etr_img = daily_coll.filterDate(agg_start_date, agg_end_date) \
-                    .select(['etr']).sum().multiply(self.etr_factor)
+                    .select(['etr']).sum().multiply(etr_factor)
 
                 image_list = []
                 if 'et' in variables:
@@ -708,10 +708,10 @@ class Collection():
         elif t_interval.lower() == 'custom':
             # if 'et' in variables or 'etf' in variables:
             et_img = daily_coll.filterDate(start_date, end_date) \
-                .select(['et']).sum().multiply(self.etr_factor)
+                .select(['et']).sum().multiply(etr_factor)
             # if 'etr' in variables or 'etf' in variables:
             etr_img = daily_coll.filterDate(start_date, end_date) \
-                .select(['etr']).sum().multiply(self.etr_factor)
+                .select(['etr']).sum().multiply(etr_factor)
 
             image_list = []
             if 'et' in variables:
